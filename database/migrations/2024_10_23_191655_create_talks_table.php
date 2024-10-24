@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('length');
             $table->string('type');
-            $table->text(('abstract'));
-            $table->text('organizer_notes');
+            $table->text(('abstract'))->nullable();
+            $table->text('organizer_notes')->nullable();
             $table->foreignIdFor(User::class);
             $table->timestamps();
         });
