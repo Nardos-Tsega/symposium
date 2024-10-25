@@ -9,4 +9,10 @@ class Conference extends Model
 {
     /** @use HasFactory<\Database\Factories\ConferenceFactory> */
     use HasFactory;
+    protected $guarded = ['id'];
+
+    public function favoriteUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorite_conferences');
+    }
 }

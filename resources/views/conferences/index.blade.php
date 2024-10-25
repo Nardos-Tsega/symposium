@@ -10,7 +10,14 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-24">
               <ul>
                 @foreach ($conferences as $conference)
-                  <li>{{ $conference->title }}</li>
+                  <li>
+                    @if (Auth::user()->favoritedConferences->pluck('id')->contains($conference->id))
+                        <a href="{{ route('conferences.unfavorite', ['conference' => $conference]) }}">*</a>
+                    @else
+                        <a href="{{ route('conferences.favorite', ['conference' => $conference]) }}">0</a>
+                    @endif
+                    {{ $conference->title }}
+                </li>
                 @endforeach
               </ul>
             </div>

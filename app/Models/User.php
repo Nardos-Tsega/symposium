@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'github_id',
+        'github_token',
+        'github_refresh_token',
     ];
 
     /**
@@ -36,6 +39,11 @@ class User extends Authenticatable
     public function talks()
     {
         return $this->hasMany(Talk::class);
+    }
+
+    public function favoritedConferences()
+    {
+        return $this->belongsToMany(Conference::class, 'favorite_conferences');
     }
 
     /**
