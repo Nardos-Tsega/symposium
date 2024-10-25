@@ -15,6 +15,7 @@ class TalkController extends Controller
      */
     public function index()
     {
+        // dd(Auth::user()->talks);
         return view('talks.index', [
             'talks' => Auth::user()->talks,
         ]);

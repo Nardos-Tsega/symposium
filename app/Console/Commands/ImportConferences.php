@@ -38,7 +38,7 @@ class ImportConferences extends Command
             ['external_id' => $cfp['_rel']['cfp_uri']],
             [
                 'title' => $cfp['name'],
-                'description' => $cfp['description'],
+                'description' => $cfp['description'] ?? 'Description will given soon',
                 'url' => $cfp['eventUri'],
                 'start_date' => $cfp['dateEventStart'],
                 'end_date' => $cfp['dateEventEnd'],
@@ -46,7 +46,7 @@ class ImportConferences extends Command
                 'cfp_end_at' => $cfp['dateCfpEnd'],
                 'start_at' => $cfp['dateEventStart'],
                 'end_at' => $cfp['dateEventEnd'],
-                'location' => $cfp['location'],
+                'location' => $cfp['location'] ?? 'Location will be given soon',
             ]
         );
     }
