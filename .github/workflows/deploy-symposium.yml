@@ -28,26 +28,29 @@ jobs:
           npm ci
           npm run build
       
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "Host nardos.info" > ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/deploy_key" >> ~/.ssh/config
+          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+      
       - name: Deploy to Production
-        uses: appleboy/ssh-action@master
-        with:
-          host: nardos.info
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            cd /var/www/symposium
-            git pull origin main
-            composer install --no-dev --optimize-autoloader
-            
-            # Create SQLite database if it doesn't exist
-            touch database/database.sqlite
-            chmod 775 database/database.sqlite
-            
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            npm ci
-            npm run build
-            sudo chown -R www-data:www-data .
+        run: |
+          ssh ${{ secrets.SSH_USERNAME }}@nardos.info '
+            cd /var/www/symposium &&
+            git pull origin main &&
+            composer install --no-dev --optimize-autoloader &&
+            touch database/database.sqlite &&
+            chmod 775 database/database.sqlite &&
+            php artisan migrate --force &&
+            php artisan config:cache &&
+            php artisan route:cache &&
+            php artisan view:cache &&
+            npm ci &&
+            npm run build &&
+            sudo chown -R www-data:www-data . &&
             sudo systemctl reload nginx
+          '
