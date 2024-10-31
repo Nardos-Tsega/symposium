@@ -6,6 +6,8 @@ class FavoritesController extends Controller
 {
     public function index()
     {
-        return view('favorites.index');
+        return view('favorites.index', [
+            'conferences' => auth()->user()->favoritedConferences,
+        ]);
     }
 }

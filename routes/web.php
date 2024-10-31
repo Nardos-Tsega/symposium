@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\FavoritesController;
+use App\Http\Controllers\FullCalenderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TalkController;
 use App\Models\User;
@@ -33,11 +34,19 @@ Route::middleware('auth')->group(function () {
     Route::get('talks', [TalkController::class, 'index'])->name('talks.index');
 
     Route::get('conferences', [ConferenceController::class, 'index'])->name(name: 'conferences.index');
-    Route::get('conferences/{conference}/unfavorite', [ConferenceController::class, 'unfavorite'])->name('conferences.unfavorite');
-    Route::get('conferences/{conference}/favorite', [ConferenceController::class, 'favorite'])->name('conferences.favorite');
+    Route::post('conferences/{conference}/favorite', [ConferenceController::class, 'favorite'])->name('conferences.favorite');
+    Route::post('conferences/{conference}/unfavorite', [ConferenceController::class, 'unfavorite'])->name('conferences.unfavorite');
 
     Route::get('favorites', [FavoritesController::class, 'index'])->name(name: 'favorites.index');
+
+    Route::controller(FullCalenderController::class)->group(function(){
+        Route::get('fullcalender', 'index')->name('fullcalender');
+        Route::post('fullcalenderAjax', 'ajax');
+    });
 });
+
+Route::get('/google/redirect', [App\Http\Controllers\GoogleLoginController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/google/callback', [App\Http\Controllers\GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 Route::get('auth/redirect', function () {
     return Socialite::driver('github')->redirect();

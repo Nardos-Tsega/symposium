@@ -36,36 +36,11 @@
 
             <!-- Favorites Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ([
-                    [
-                        'title' => 'Laravel Conference 2024',
-                        'date' => 'July 15-17, 2024',
-                        'location' => 'Amsterdam, Netherlands',
-                        'category' => 'PHP',
-                        'description' => 'Join the largest Laravel community event with speakers from around the world.',
-                        'website' => 'https://laracon.eu'
-                    ],
-                    [
-                        'title' => 'VueConf US',
-                        'date' => 'March 25-27, 2024',
-                        'location' => 'Austin, TX',
-                        'category' => 'JavaScript',
-                        'description' => 'The official Vue.js conference in North America featuring core team members.',
-                        'website' => '#'
-                    ],
-                    [
-                        'title' => 'DevOps Days London',
-                        'date' => 'September 5-6, 2024',
-                        'location' => 'London, UK',
-                        'category' => 'DevOps',
-                        'description' => 'Two days of tech talks and workshops focused on DevOps practices and culture.',
-                        'website' => '#'
-                    ]
-                ] as $conference)
+                @foreach ($conferences as $conference)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300">
                         <!-- Conference Header -->
                         <div class="relative">
-                            <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-lg"></div>
+                            <div class="h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-lg"></div>
                             <!-- Favorite Button -->
                             <form method="POST" action="#" class="absolute top-4 right-4">
                                 @csrf
@@ -78,7 +53,7 @@
                             </form>
                         </div>
 
-                        <div class="p-6 -mt-8">
+                        <div class="p-6 mt-4">
                             <!-- Conference Category Badge -->
                             <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
                                 {{ $conference['category'] }}

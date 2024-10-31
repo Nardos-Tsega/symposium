@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Conference;
 use Illuminate\Http\Request;
+use Spatie\GoogleCalendar\Event;
+use Carbon\Carbon;
 
 class ConferenceController extends Controller
 {
@@ -68,6 +70,13 @@ class ConferenceController extends Controller
     public function favorite(Conference $conference)
     {
         auth()->user()->favoritedConferences()->attach($conference->id);
+
+
+        Event::create([
+            'name' => 'A new event',
+            'startDateTime' => Carbon::now(),
+            'endDateTime' => Carbon::now()->addHour(),
+         ]);
 
         return back();
     }
