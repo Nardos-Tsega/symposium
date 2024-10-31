@@ -71,13 +71,6 @@ class ConferenceController extends Controller
     {
         auth()->user()->favoritedConferences()->attach($conference->id);
 
-
-        Event::create([
-            'name' => 'A new event',
-            'startDateTime' => Carbon::now(),
-            'endDateTime' => Carbon::now()->addHour(),
-         ]);
-
         return back();
     }
 
