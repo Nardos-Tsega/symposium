@@ -27,114 +27,112 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div x-data="{
+        filter: 'all',
+        conferences: {{ Js::from($conferences) }},
+        filteredConferences() {
+            return this.conferences.filter(conf => {
+                if (this.filter === 'all') return true;
+                if (this.filter === 'favorites') return conf.is_favorited;
+                return true;
+            });
+        }
+    }" class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Filters Section -->
             <div class="mb-6 flex flex-wrap gap-2">
-                <button class="px-4 py-2 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">
+                <button @click="filter = 'all'"
+                        :class="{'bg-indigo-100 dark:bg-indigo-900': filter === 'all', 'bg-gray-100 dark:bg-gray-700': filter !== 'all'}"
+                        class="px-4 py-2 rounded-full text-white text-sm font-medium hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">
                     All
                 </button>
-                <button class="px-4 py-2 rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                    Upcoming
-                </button>
-                <button class="px-4 py-2 rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <button @click="filter = 'favorites'"
+                        :class="{'bg-indigo-100 dark:bg-indigo-900': filter === 'favorites', 'bg-gray-100 dark:bg-gray-700': filter !== 'favorites'}"
+                        class="px-4 py-2 rounded-full text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                     Favorites
                 </button>
             </div>
 
             <!-- Conferences Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($conferences as $conference)
+                <template x-for="conference in filteredConferences()" :key="conference.id">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300">
                         <!-- Conference Header -->
                         <div class="relative">
-                            <div class="h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-lg">
-
-                            </div>
+                            <div class="h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-lg"></div>
                             <!-- Favorite Button -->
-                            <form method="POST"
-                                  action="{{ Auth::user()->favoritedConferences->pluck('id')->contains($conference->id)
-                                    ? route('conferences.unfavorite', $conference)
-                                    : route('conferences.favorite', $conference) }}"
+                            <form :action="`/conferences/${conference.id}/${conference.is_favorited ? 'unfavorite' : 'favorite'}`"
+                                  method="POST"
                                   class="absolute top-4 right-4">
                                 @csrf
-                                @if (Auth::user()->favoritedConferences->pluck('id')->contains($conference->id))
-                                    <form action="{{ route('conferences.unfavorite', $conference) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('POST')
-                                        <button type="submit">
-                                            <svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24">
-                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('conferences.favorite', $conference) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit">
-                                            <svg class="w-6 h-6 text-white hover:text-red-500 stroke-current" fill="none" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                @endif
+                                <button type="submit">
+                                    <template x-if="conference.is_favorited">
+                                        <svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                    </template>
+                                    <template x-if="!conference.is_favorited">
+                                        <svg class="w-6 h-6 text-white hover:text-red-500 stroke-current" fill="none" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                    </template>
                                 </button>
                             </form>
                         </div>
 
                         <div class="p-6 mt-4">
                             <!-- Conference Category Badge -->
-                            <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                {{ $conference->category ?? 'Conference' }}
+                            <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
+                                  x-text="conference.category || 'Conference'">
                             </span>
 
                             <!-- Conference Title -->
-                            <h3 class="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
-                                {{ $conference->title }}
+                            <h3 class="mt-4 text-xl font-semibold text-gray-900 dark:text-white"
+                                x-text="conference.title">
                             </h3>
 
                             <!-- Conference Details -->
                             <div class="mt-4 space-y-3">
-                                @if ($conference->date)
+                                <template x-if="conference.date">
                                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        {{ $conference->date }}
+                                        <span x-text="conference.date"></span>
                                     </div>
-                                @endif
+                                </template>
 
-                                @if ($conference->location)
+                                <template x-if="conference.location">
                                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-300">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        {{ $conference->location }}
+                                        <span x-text="conference.location"></span>
                                     </div>
-                                @endif
+                                </template>
 
-                                @if ($conference->description)
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                                        {{ $conference->description }}
+                                <template x-if="conference.description">
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3"
+                                       x-text="conference.description">
                                     </p>
-                                @endif
+                                </template>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="mt-6 flex justify-end space-x-2">
-                                @if ($conference->website)
-                                    <a href="{{ $conference->website }}"
+                            <div class="flex mb-auto justify-between">
+                                <template x-if="conference.website">
+                                    <a :href="conference.website"
                                        target="_blank"
-                                       class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors duration-200">
+                                       class="inline-flex items-center px-3 py-4 text-sm font-medium rounded-md text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 transition-colors duration-200">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
                                         Visit Website
                                     </a>
-                                @endif
+                                </template>
 
-                                <button class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                <button @click="addToCalendar(conference)" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
@@ -143,7 +141,7 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                </template>
             </div>
         </div>
     </div>
@@ -194,5 +192,42 @@
             const notification = document.getElementById('updateNotification');
             notification.classList.add('hidden');
         }
+
+        function addToCalendar(conference) {
+        // Dummy data for testing
+        const data = {
+            title: conference.title,
+            start: conference.date_start,
+            end: conference.date_end,
+            type: 'add'
+        };
+
+        // Send POST request using fetch
+        fetch('/fullcalenderAjax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle successful response
+            console.log('Success:', data);
+            // You could show a success notification here
+            const notification = document.getElementById('updateNotification');
+            notification.querySelector('p').textContent = 'Event added to calendar!';
+            notification.classList.remove('hidden');
+
+            setTimeout(() => {
+                hideNotification();
+            }, 3000);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // You could show an error notification here
+        });
+    }
     </script>
 </x-app-layout>

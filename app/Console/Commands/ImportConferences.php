@@ -38,15 +38,16 @@ class ImportConferences extends Command
             ['external_id' => $cfp['_rel']['cfp_uri']],
             [
                 'title' => $cfp['name'],
-                'description' => $cfp['description'] ?? 'Description will given soon',
-                'url' => $cfp['eventUri'],
+                'description' => !empty($cfp['description']) ? $cfp['description'] : 'Description will be given soon',
+                'url' => !empty($cfp['eventUri']) ? $cfp['eventUri'] : '#',
                 'start_date' => $cfp['dateEventStart'],
                 'end_date' => $cfp['dateEventEnd'],
                 'cfp_start_at' => $cfp['dateCfpStart'],
                 'cfp_end_at' => $cfp['dateCfpEnd'],
                 'start_at' => $cfp['dateEventStart'],
                 'end_at' => $cfp['dateEventEnd'],
-                'location' => $cfp['location'] ?? 'Location will be given soon',
+                'location' => !empty($cfp['location']) ? $cfp['location'] : 'Not Specified',
+
             ]
         );
     }

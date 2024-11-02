@@ -50,73 +50,48 @@ $(document).ready(function () {
                     },
                     selectable: true,
                     selectHelper: true,
-                    select: function (start, end, allDay) {
-                        var title = prompt('Event Title:');
-                        if (title) {
-                            var start = $.fullCalendar.formatDate(start, "Y-MM-DD");
-                            var end = $.fullCalendar.formatDate(end, "Y-MM-DD");
-                            $.ajax({
-                                url: SITEURL + "/fullcalenderAjax",
-                                data: {
-                                    title: title,
-                                    start: start,
-                                    end: end,
-                                    type: 'add'
-                                },
-                                type: "POST",
-                                success: function (data) {
-                                    displayMessage("Event Created Successfully");
+                    // select: function (start, end, allDay) {
+                    //     var title = prompt('Event Title:');
+                    //     if (title) {
+                    //         var start = $.fullCalendar.formatDate(start, "Y-MM-DD");
+                    //         var end = $.fullCalendar.formatDate(end, "Y-MM-DD");
+                    //         $.ajax({
+                    //             url: SITEURL + "/fullcalenderAjax",
+                    //             data: {
+                    //                 title: title,
+                    //                 start: start,
+                    //                 end: end,
+                    //                 type: 'add'
+                    //             },
+                    //             type: "POST",
+                    //             success: function (data) {
+                    //                 displayMessage("Event Created Successfully");
 
-                                    calendar.fullCalendar('renderEvent',
-                                        {
-                                            id: data.id,
-                                            title: title,
-                                            start: start,
-                                            end: end,
-                                            allDay: allDay
-                                        },true);
+                    //                 calendar.fullCalendar('renderEvent',
+                    //                     {
+                    //                         id: data.id,
+                    //                         title: title,
+                    //                         start: start,
+                    //                         end: end,
+                    //                         allDay: allDay
+                    //                     },true);
 
-                                    calendar.fullCalendar('unselect');
-                                }
-                            });
-                        }
+                    //                 calendar.fullCalendar('unselect');
+                    //             }
+                    //         });
+                    //     }
+                    // },
+                    selet: () => {
+                        // console.log('select');
+                        // TODO - Add select
                     },
-                    eventDrop: function (event, delta) {
-                        var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                        var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-
-                        $.ajax({
-                            url: SITEURL + '/fullcalenderAjax',
-                            data: {
-                                title: event.title,
-                                start: start,
-                                end: end,
-                                id: event.id,
-                                type: 'update'
-                            },
-                            type: "POST",
-                            success: function (response) {
-                                displayMessage("Event Updated Successfully");
-                            }
-                        });
+                    eventDrop: {
+                        // TODO - Add event drop
                     },
-                    eventClick: function (event) {
-                        var deleteMsg = confirm("Do you really want to delete?");
-                        if (deleteMsg) {
-                            $.ajax({
-                                type: "POST",
-                                url: SITEURL + '/fullcalenderAjax',
-                                data: {
-                                        id: event.id,
-                                        type: 'delete'
-                                },
-                                success: function (response) {
-                                    calendar.fullCalendar('removeEvents', event.id);
-                                    displayMessage("Event Deleted Successfully");
-                                }
-                            });
-                        }
-                    }
+                    eventClick: () => {
+                        // console.log('eventClick');
+                        // TODO - Add event click
+                    },
 
                 });
 

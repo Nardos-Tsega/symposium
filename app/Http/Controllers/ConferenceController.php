@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conference;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\GoogleCalendar\Event;
 use Carbon\Carbon;
 
@@ -14,9 +15,23 @@ class ConferenceController extends Controller
      */
     public function index()
     {
-        return view('conferences.index', [
-            'conferences' => Conference::all(),
-        ]);
+
+        $conferences = Conference::with('favoriteUsers')->get()->map(function($conference) {
+            return [
+                'id' => $conference->id,
+                'title' => $conference->title,
+                'category' => $conference->category,
+                'date' => Carbon::parse($conference->start_at)->format('F j, Y'),
+                'date_start' => $conference->start_at,
+                'date_end' => $conference->end_at,
+                'location' => $conference->location ,
+                'description' => $conference->description,
+                'website' => $conference->url ?? 'Not Specified',
+                'is_favorited' => Auth::user()->favoritedConferences->contains($conference->id)
+            ];
+        });
+
+        return view('conferences.index', compact('conferences'));
     }
 
     /**

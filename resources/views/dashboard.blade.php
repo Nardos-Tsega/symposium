@@ -36,7 +36,7 @@
                                     </dt>
                                     <dd class="flex items-baseline">
                                         <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                                            12
+                                            {{ $stats['total_talks'] }}
                                         </div>
                                     </dd>
                                 </dl>
@@ -61,7 +61,7 @@
                                     </dt>
                                     <dd class="flex items-baseline">
                                         <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                                            5
+                                            {{ $stats['upcoming_talks'] }}
                                         </div>
                                     </dd>
                                 </dl>
@@ -86,7 +86,7 @@
                                     </dt>
                                     <dd class="flex items-baseline">
                                         <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                                            8
+                                            {{ $stats['open_cfps'] }}
                                         </div>
                                     </dd>
                                 </dl>
@@ -103,20 +103,35 @@
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Recent Talks</h3>
                         <div class="space-y-4">
-                            @foreach (['Laravel Best Practices', 'Introduction to Vue 3', 'Mastering Git', 'Web Security 101', 'Docker for Developers'] as $talk)
+                            @forelse ($recentTalks as $talk)
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <a href="#"
-                                           class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                            {{ $talk }}
+                                        <a href="{{ $talk['url'] }}" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                            {{ $talk['title'] }}
                                         </a>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">45 minutes • Workshop</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $talk['duration'] }} • {{ $talk['type'] }}</p>
                                     </div>
                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        2 days ago
+                                        {{ $talk['created_at_diff'] }}
                                     </span>
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No talks yet</h3>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating your first talk.</p>
+                                    <div class="mt-6">
+                                        <a href="{{ route('talks.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            New Talk
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforelse
                         </div>
                         <div class="mt-6">
                             <a href="{{ route('talks.index') }}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
@@ -130,18 +145,12 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Upcoming CFP Deadlines</h3>
+                        <!-- Upcoming CFPs -->
                         <div class="space-y-4">
-                            @foreach ([
-                                ['name' => 'Laravel Conference 2024', 'deadline' => 'Dec 15, 2024', 'days_left' => '45 days left'],
-                                ['name' => 'VueConf US', 'deadline' => 'Jan 10, 2025', 'days_left' => '60 days left'],
-                                ['name' => 'PHP World', 'deadline' => 'Nov 30, 2024', 'days_left' => '30 days left'],
-                                ['name' => 'ReactConf 2024', 'deadline' => 'Dec 1, 2024', 'days_left' => '31 days left'],
-                                ['name' => 'DevOps Days', 'deadline' => 'Dec 20, 2024', 'days_left' => '50 days left']
-                            ] as $cfp)
+                            @foreach ($upcomingCfps as $cfp)
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <a href="#"
-                                           class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                        <a href="{{ $cfp['url'] }}" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400">
                                             {{ $cfp['name'] }}
                                         </a>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -155,7 +164,7 @@
                             @endforeach
                         </div>
                         <div class="mt-6">
-                            <a href="#" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+                            <a href="{{ route('conferences.index') }}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
                                 View all CFPs →
                             </a>
                         </div>
